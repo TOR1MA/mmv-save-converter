@@ -31,8 +31,8 @@ if %count% gtr 1 (
 echo %selected%
 for /f %%i in ('powershell -noprofile -command "Get-Date -Format \"yyyy-MM-dd_HH-mm-ss\""') do set "datetime=%%i"
 if not exist "%selected%\Backups" mkdir "%selected%\Backups"
-if exist "%selected%\NR0000.%newExtension%.bak" copy "%selected%\NR0000.%newExtension%.bak" "%selected%\Backups\NR0000_%datetime%.%newExtension%.bak"
-if exist "%selected%\NR0000.%newExtension%" copy "%selected%\NR0000.%newExtension%" "%selected%\NR0000.%newExtension%.bak"
+if exist "%selected%\NR0000.%newExtension%.bk" copy "%selected%\NR0000.%newExtension%.bk" "%selected%\Backups\NR0000_%datetime%.%newExtension%.bk"
+if exist "%selected%\NR0000.%newExtension%" copy "%selected%\NR0000.%newExtension%" "%selected%\NR0000.%newExtension%.bk"
 copy "%selected%\NR0000.%targetExtension%" "%selected%\NR0000.%newExtension%"
 if %ERRORLEVEL% neq 0 goto ProccessError
 echo Success
