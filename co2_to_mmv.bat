@@ -15,12 +15,14 @@ for /d %%D in ("%APPDATA%\Nightreign\*") do (
 
 if %count% equ 0 (
     echo Can't find any Steam ID folders
+    echo:
     pause
     exit /b 1
 )
 
 if %count% gtr 1 (
     echo Select Steam ID to convert save.
+    echo:
     for /l %%i in (1,1,%count%) do (
         echo %%i. !folders[%%i]!
     )
@@ -30,7 +32,9 @@ if %count% gtr 1 (
     set "selected=!folders[1]!"
 )
 
+echo:
 echo %selected%
+echo:
 
 @rem Get current date and time
 for /f %%i in ('powershell -noprofile -command "Get-Date -Format \"yyyy-MM-dd_HH-mm-ss\""') do set "datetime=%%i"
@@ -43,25 +47,32 @@ copy "%selected%\NR0000.%targetExtension%" "%selected%\NR0000.%newExtension%"
 
 @rem Handle errors
 if %ERRORLEVEL% neq 0 goto ProccessError
+echo:
 echo Success
+echo:
 pause
 exit /b 0
 
 @rem Error message
 :ProccessError
+echo:
 echo Error, something went wrong.
+echo:
 pause
 exit /b 1
 
 @rem Steam ID selection menu
 :Select
+echo:
 set /p choice="Enter number: "
 echo %choice%| findstr /r "^[1-9][0-9]*$" >nul
 if errorlevel 1 (
+    echo:
     echo Please enter a valid number.
     goto :Select
 )
 if %choice% gtr %count% (
+    echo:
     echo Number out of range.
     goto :Select
 )
