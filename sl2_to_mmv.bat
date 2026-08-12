@@ -2,10 +2,12 @@
 
 setlocal enabledelayedexpansion
 
+@rem Variables
 set count=0
 set newExtension=mmv
 set targetExtension=sl2
 
+@rem Create a variable for each founded folder
 for /d %%D in ("%APPDATA%\Nightreign\*") do (
     set /a count+=1
     set "folders[!count!]=%%D"
@@ -29,11 +31,17 @@ if %count% gtr 1 (
 )
 
 echo %selected%
+
+@rem Get current date and time
 for /f %%i in ('powershell -noprofile -command "Get-Date -Format \"yyyy-MM-dd_HH-mm-ss\""') do set "datetime=%%i"
 if not exist "%selected%\Backups" mkdir "%selected%\Backups"
+
+@rem Create backup files and converts targetExtension save to newExtension
 if exist "%selected%\NR0000.%newExtension%.bk" copy "%selected%\NR0000.%newExtension%.bk" "%selected%\Backups\NR0000_%datetime%.%newExtension%.bk"
 if exist "%selected%\NR0000.%newExtension%" copy "%selected%\NR0000.%newExtension%" "%selected%\NR0000.%newExtension%.bk"
 copy "%selected%\NR0000.%targetExtension%" "%selected%\NR0000.%newExtension%"
+
+@rem Handle errors
 if %ERRORLEVEL% neq 0 goto ProccessError
 echo Success
 pause
@@ -45,6 +53,7 @@ echo Error, something went wrong.
 pause
 exit /b 1
 
+@rem Steam ID selection menu
 :Select
 set /p choice="Enter number: "
 echo %choice%| findstr /r "^[1-9][0-9]*$" >nul
