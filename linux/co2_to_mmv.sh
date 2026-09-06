@@ -3,7 +3,7 @@
 # Variables
 count=0
 newExtension="mmv"
-targetExtension="sl2"
+targetExtension="co2"
 
 steamCandidates="
 $HOME/.steam/steam
