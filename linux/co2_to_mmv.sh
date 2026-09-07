@@ -71,13 +71,13 @@ select_steam_id() {
  
         if ! echo "$choice" | grep -Eq '^[1-9][0-9]*$'; then
             echo ""
-            echo "Please enter a valid number."
+            echo "Please enter a valid number, use a single digit, e.g. 1 or 2."
             continue
         fi
  
         if [ "$choice" -gt "$count" ]; then
             echo ""
-            echo "Number out of range."
+            echo "Number out of range, use a single digit, e.g. 1 or 2."
             continue
         fi
  
@@ -91,7 +91,7 @@ if [ "$count" -gt 1 ]; then
     n=0
     while read -r line; do
         n=$((n + 1))
-        echo "$n. $line"
+        echo "Press $n to select - $line"
     done < "$temp_file"
  
     select_steam_id
