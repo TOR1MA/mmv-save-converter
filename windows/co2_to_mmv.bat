@@ -24,7 +24,7 @@ if %count% gtr 1 (
     echo Select Steam ID to convert save.
     echo:
     for /l %%i in (1,1,%count%) do (
-        echo %%i. !folders[%%i]!
+        echo Enter %%i to select - !folders[%%i]!
     )
     call :Select
     call set "selected=%%folders[!choice!]%%"
