@@ -73,7 +73,7 @@ if errorlevel 1 (
 )
 if %choice% gtr %count% (
     echo:
-    echo Number out of range.
+    echo Number out of range, use a single digit (1,2 and etc).
     goto :Select
 )
 goto :eof
