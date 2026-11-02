@@ -5,7 +5,7 @@ setlocal enabledelayedexpansion
 @rem Variables
 set count=0
 set newExtension=test
-set targetExtensions=co2 sl2
+set targetExtensions="dbb=Daybreak Beta Save" "co2=Seamless co-op save (mmv 2.1.8 and older)" "sl2=Save file from Vanilla" "dev=Dev testing branch"
 
 @rem Create a variable for each founded folder
 for /d %%D in ("%APPDATA%\Nightreign\*") do (
@@ -33,31 +33,36 @@ if %count% gtr 1 (
 )
 
 echo:
-echo %selected%
+echo Selected SteamID folder - %selected%
 echo:
 
 @rem Get current date and time
 for /f %%i in ('powershell -noprofile -command "Get-Date -Format \"yyyy-MM-dd_HH-mm-ss\""') do set "datetime=%%i"
 if not exist "%selected%\Backups" mkdir "%selected%\Backups"
 
+@rem List of saves
+for %%i in (%targetExtensions%) do for /f "tokens=1,* delims==" %%a in (%%i) do (
+    if exist "%selected%\NR0000.%%a" echo %%a - %%b
+)
+call :SaveSelect
+
 @rem Create backup files and converts targetExtension save to newExtension
-for %%i in (%targetExtensions%) do (
-    if exist "%selected%\NR0000.%%i" (
-        echo Targeted save extension - "%%i"
-        if exist "%selected%\NR0000.%newExtension%" (
-            echo:
-            echo Save file with this extension "%newExtension%" already exists, if u want to replace it with new save confirm it.
-            echo ^(previous save would be saved as .bk file, in case u would want to revert it^)
-            echo:
-            call :Confirmation
-        )
+echo:
+echo Selected SteamID folder - %selected%
+echo NR0000.%targetExtension% will be copied as NR0000.%newExtension%.
+if exist "%selected%\NR0000.%newExtension%" (
+    if exist "%selected%\NR0000.%newExtension%" (
         echo:
-        if exist "%selected%\NR0000.%newExtension%.bk" copy "%selected%\NR0000.%newExtension%.bk" "%selected%\Backups\NR0000_%datetime%.%newExtension%.bk"
-        if exist "%selected%\NR0000.%newExtension%" copy "%selected%\NR0000.%newExtension%" "%selected%\NR0000.%newExtension%.bk"
-        copy "%selected%\NR0000.%%i" "%selected%\NR0000.%newExtension%"
-        call :Exit
+        echo Save file with this extension "%newExtension%" already exists, if u want to replace it with new save confirm it.
+        echo ^(previous save would be saved as NR0000.%newExtension%.bk file, in case u would want to revert it^)
+        echo:
+        call :Confirmation
     )
 )
+echo:
+if exist "%selected%\NR0000.%newExtension%.bk" copy "%selected%\NR0000.%newExtension%.bk" "%selected%\Backups\NR0000_%datetime%.%newExtension%.bk"
+if exist "%selected%\NR0000.%newExtension%" copy "%selected%\NR0000.%newExtension%" "%selected%\NR0000.%newExtension%.bk"
+copy "%selected%\NR0000.%targetExtension%" "%selected%\NR0000.%newExtension%"
 
 @rem Handle errors
 if %ERRORLEVEL% neq 0 goto ProccessError
@@ -90,7 +95,28 @@ if %choice% gtr %count% (
     echo Number out of range, use a single digit, e.g. 1 or 2.
     goto :Select
 )
+cls
 goto :eof
+
+@rem Save file selection menu
+:SaveSelect
+echo:
+set /p "choice=Enter a save file extension: "
+for %%i in (%targetExtensions%) do for /f "tokens=1,* delims==" %%a in (%%i) do (
+    if /i "!choice!" == "%%a" (
+        if not exist "%selected%\NR0000.%%a" (
+            echo:
+            echo Save file with .%%a extension doesn't exists, please select another one.
+            goto :SaveSelect 
+        )
+        set "targetExtension=%%a"
+        cls
+        goto :eof
+    )
+)
+echo:
+echo Wrong save file extension ^(co2, sl2 and etc.^).
+goto :SaveSelect
 
 @rem Confirmation dialog
 :Confirmation
