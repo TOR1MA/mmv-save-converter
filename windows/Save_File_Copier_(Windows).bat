@@ -7,6 +7,7 @@ set count=0
 set newExtension=test
 set targetExtensions="dbb=Daybreak Beta Save" "co2=Seamless co-op save (mmv 2.1.8 and older)" "sl2=Save file from Vanilla" "dev=Dev testing branch"
 
+cls
 @rem Create a variable for each founded folder
 for /d %%D in ("%APPDATA%\Nightreign\*") do (
     set /a count+=1
@@ -32,7 +33,6 @@ if %count% gtr 1 (
     set "selected=!folders[1]!"
 )
 
-echo:
 echo Selected SteamID folder - %selected%
 echo:
 
@@ -47,21 +47,18 @@ for %%i in (%targetExtensions%) do for /f "tokens=1,* delims==" %%a in (%%i) do 
 call :SaveSelect
 
 @rem Create backup files and converts targetExtension save to newExtension
-echo:
 echo Selected SteamID folder - %selected%
 echo NR0000.%targetExtension% will be copied as NR0000.%newExtension%.
 if exist "%selected%\NR0000.%newExtension%" (
-    if exist "%selected%\NR0000.%newExtension%" (
-        echo:
-        echo Save file with this extension "%newExtension%" already exists, if u want to replace it with new save confirm it.
-        echo ^(previous save would be saved as NR0000.%newExtension%.bk file, in case u would want to revert it^)
-        echo:
-        call :Confirmation
-    )
+    echo:
+    echo Save file with this extension "%newExtension%" already exists, if u want to replace it with new save confirm it.
+    echo ^(previous save would be saved as NR0000.%newExtension%.bk file, in case u would want to revert it^)
+    echo:
+    call :Confirmation
+    if exist "%selected%\NR0000.%newExtension%.bk" copy "%selected%\NR0000.%newExtension%.bk" "%selected%\Backups\NR0000_%datetime%.%newExtension%.bk"
+    copy "%selected%\NR0000.%newExtension%" "%selected%\NR0000.%newExtension%.bk"
 )
 echo:
-if exist "%selected%\NR0000.%newExtension%.bk" copy "%selected%\NR0000.%newExtension%.bk" "%selected%\Backups\NR0000_%datetime%.%newExtension%.bk"
-if exist "%selected%\NR0000.%newExtension%" copy "%selected%\NR0000.%newExtension%" "%selected%\NR0000.%newExtension%.bk"
 copy "%selected%\NR0000.%targetExtension%" "%selected%\NR0000.%newExtension%"
 
 @rem Handle errors
@@ -106,7 +103,7 @@ for %%i in (%targetExtensions%) do for /f "tokens=1,* delims==" %%a in (%%i) do 
     if /i "!choice!" == "%%a" (
         if not exist "%selected%\NR0000.%%a" (
             echo:
-            echo Save file with .%%a extension doesn't exists, please select another one.
+            echo Save file with %%a extension doesn't exists, please select another one.
             goto :SaveSelect 
         )
         set "targetExtension=%%a"
